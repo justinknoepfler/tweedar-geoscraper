@@ -46,7 +46,6 @@
 				<method ref="tweetFilter" method="process" />
 				<bean ref="jsonToJdbc" method="translateTweetToJdbcInsertExchange" />
 				<to uri="jdbc:dataSource" />
-				<to uri="log:dbInsert"/>
 			</filter>
 		</route>
 
