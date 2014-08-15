@@ -26,7 +26,7 @@ public class TwitterClient {
 		 messages = new LinkedBlockingQueue<String>(100000);
 		
 		// Connect to the filter endpoint, tracking the term "twitterapi"
-		Hosts host = new HttpHosts(Constants.STREAM_HOST);
+		Hosts host = new HttpHosts(com.twitter.hbc.core.Constants.STREAM_HOST);
 		StatusesFilterEndpoint endpoint = new StatusesFilterEndpoint();
 		ArrayList<String> terms = new ArrayList<String>();
 		terms.add("a");
