@@ -17,8 +17,33 @@ import com.twitter.hbc.httpclient.auth.OAuth1;
 
 public class TwitterClient {
 	
+	private static final int QUEUE_WORKER_COUNT = 5;
+	
 	Client client;
 	BlockingQueue<String> messages;
+	
+	private class QueueWorker implements Runnable {
+		ProducerTemplate producer;
+		BlockingQueue<String> queue;
+		Client client;
+		QueueWorker(Client client, BlockingQueue queue, ProducerTemplate producer){
+			this.client = client;
+			this.queue = queue;
+			this.producer = producer;
+		}
+		public void run() {
+			while (!client.isDone()) {
+				try{
+					String message = queue.take();
+					producer.sendBody("seda://sendTweetToDatabase", message);
+				}
+				catch (Exception ex){
+					//NOOP
+				}
+			}
+		}
+	}
+
 
 	public void start(Exchange exchange) throws Exception {
 
@@ -49,10 +74,14 @@ public class TwitterClient {
 		
 		public void offloadMessageToStorage(Exchange exchange) throws Exception {
 			CamelContext context = exchange.getContext();
-			ProducerTemplate producer = context.createProducerTemplate();
-			while (!client.isDone()) {
-				String message = messages.take();
-				producer.sendBody("seda://sendTweetToDatabase", message);
+			for(int x = 0; x < QUEUE_WORKER_COUNT; x++){
+				ProducerTemplate producer = context.createProducerTemplate();
+				Thread thread = new Thread(new QueueWorker(client, messages, producer));
+				thread.start();
+			}
+			while(!client.isDone()){
+				Thread.currentThread().sleep(5000);
+				//NOOP
 			}
 		}
 	}

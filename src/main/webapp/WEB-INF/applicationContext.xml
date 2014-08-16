@@ -40,7 +40,7 @@
 		</route>
 
 		<route id="sendTweetToDatabase">
-			<from uri="seda://sendTweetToDatabase" />
+			<from uri="seda://sendTweetToDatabase?concurrentConsumers=5" />
 			<unmarshal ref="jackson" />
 			<filter>
 				<method ref="tweetFilter" method="process" />
