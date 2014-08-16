@@ -54,7 +54,7 @@ public class JsonToJdbcExchangeTranslator {
 			text = text.replaceAll(regex, "\\\\$1");
 		}
 		string = string.concat(time + ", ");
-		string = string.concat(tweet.get("id") + ", ");
+		string = string.concat(tweet.get("id_str") + ", ");
 		string = string.concat("\"" + coordsStr + "\"" + ", ");
 		string = string.concat("\"" + text + "\"");
 		return string;
