@@ -3,30 +3,43 @@ package edu.umn.knoe0023.tweedar.stream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.text.SimpleDateFormat;
 
 import org.apache.camel.Exchange;
 
 public class JsonToJdbcExchangeTranslator {
-	
+
 	String regex;
-	
-	public JsonToJdbcExchangeTranslator(){
-		// your special characters
+	private static final String TWITTER_DATE_FORMAT  = "EEE MMM dd HH:mm:ss ZZZZZ yyyy";
+	SimpleDateFormat dateFormat;
+
+	public JsonToJdbcExchangeTranslator() {
+		// characters to filter from tweets
 		regex = "+ – && || ! ( ) { } [ ] ^ ” ~ * ? : \\ \" \'";
-		// building a valid regex out of above
 		regex = '(' + regex.replaceAll("([^\\s]{1,2})(?=(?:\\s+|$))",
-		                               "\\\\Q$1\\\\E").replace(' ', '|') + ')';
+				"\\\\Q$1\\\\E").replace(' ', '|') + ')';
+		dateFormat = new SimpleDateFormat(TWITTER_DATE_FORMAT);
+		dateFormat.setLenient(true);
 	}
-	public void translateTweetToJdbcInsertExchange(Exchange exchange){
-		Map<String, Object> tweet = (HashMap<String, Object>) exchange.getIn().getBody();
+
+	public void translateTweetToJdbcInsertExchange(Exchange exchange) throws Exception {
+		Map<String, Object> tweet = (HashMap<String, Object>) exchange.getIn()
+				.getBody();
 		String query = "INSERT INTO " + Constants.TWEET_TABLE + " VALUES(";
 		query = query.concat(tweetToString(tweet));
 		query = query.concat(");");
 		exchange.getIn().setBody(query);
 	}
-	
-	private String tweetToString(Map<String, Object> tweet){
+
+	private String tweetToString(Map<String, Object> tweet) throws Exception{
 		String string = "";
+		long time = 0;
+		
+		String createdAt = (String) tweet.get("created_at");
+		if (createdAt != null){
+			time = dateFormat.parse(createdAt).getTime();
+		}
+		
 		String coordsStr = "";
 		HashMap<String, Object> coords = (HashMap<String, Object>)tweet.get("coordinates");
 		if (coords != null){
@@ -38,15 +51,12 @@ public class JsonToJdbcExchangeTranslator {
 		
 		String text = (String)tweet.get("text");
 		if (text != null){
-
-
-			// actual replacement
 			text = text.replaceAll(regex, "\\\\$1");
 		}
+		string = string.concat(time + ", ");
 		string = string.concat(tweet.get("id") + ", ");
 		string = string.concat("\"" + coordsStr + "\"" + ", ");
 		string = string.concat("\"" + text + "\"");
 		return string;
 	}
-
 }
