@@ -31,6 +31,7 @@ public class TwitterClient {
 			this.queue = queue;
 			this.producer = producer;
 		}
+		
 		public void run() {
 			while (!client.isDone()) {
 				try{
@@ -50,21 +51,19 @@ public class TwitterClient {
 		// Initialize a queue to collect messages from the stream
 		 messages = new LinkedBlockingQueue<String>(100000);
 		
-		// Connect to the filter endpoint, tracking the term "twitterapi"
 		Hosts host = new HttpHosts(com.twitter.hbc.core.Constants.STREAM_HOST);
 		StatusesFilterEndpoint endpoint = new StatusesFilterEndpoint();
 		ArrayList<String> terms = new ArrayList<String>();
-		terms.add("a");
+		terms.add("a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z");
 		endpoint.trackTerms(terms);
 		
-		// Drop in the oauth credentials for your app, available on
-		// dev.twitter.com
+		// Drop in the oauth credentials
 		Authentication auth = new OAuth1("1gkVqBVs3DMmYkctTtWVEUn1v", "I2nNOSydVaH7Y0G8nEqM1wv8hvc3RIlM1zjAGYeRCh2z1mc5Ko",
 				"2659905841-EwKVLwzMzfkcp63tXGqZVDqtNLcAETwdDXgJPek", "4Ngn7PY6vi5gtZrqlOTUpNkq5d8t79UEP7Pvc1R6onOis");
 
 		// Build a client and read messages until the connection closes.
 		ClientBuilder builder = new ClientBuilder()
-				.name("FooBarBaz-StreamingClient").hosts(host)
+				.name("TweedarGeoscraper").hosts(host)
 				.authentication(auth).endpoint(endpoint)
 				.processor(new StringDelimitedProcessor(messages));
 		client = builder.build();
@@ -81,7 +80,6 @@ public class TwitterClient {
 			}
 			while(!client.isDone()){
 				Thread.currentThread().sleep(5000);
-				//NOOP
 			}
 		}
 	}

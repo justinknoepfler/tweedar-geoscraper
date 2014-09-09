@@ -1,0 +1,20 @@
+package edu.umn.knoe0023.tweedar.service;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Response;
+
+@Path("/geoTweet")
+public class HelloWorld {
+
+    @GET
+    @Path("/recent")
+    @Produces("application/json")
+    public String getRecent(@PathParam String date) {
+    	return "TODO: implement this";
+    }
+}
+

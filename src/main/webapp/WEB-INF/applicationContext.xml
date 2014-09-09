@@ -17,7 +17,7 @@
 	<bean id="jsonToJdbc"
 		class="edu.umn.knoe0023.tweedar.stream.JsonToJdbcExchangeTranslator" />
 
-	<!-- this is the JDBC data source  -->
+	<!-- JDBC data source  -->
 	<bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource"
 		destroy-method="close">
 		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
@@ -26,20 +26,19 @@
 		<property name="password" value="7c1d1501" />
 	</bean>
 
-	<!-- Simple camel route which send every one minute a message on the console. -->
 	<camelContext xmlns="http://camel.apache.org/schema/spring">
 
 		<dataFormats>
 			<json id="jackson" library="Jackson" />
 		</dataFormats>
 
-		<route id="startClient">
+		<route id="tweedarGeo-startClient">
 			<from uri="timer://foo?repeatCount=1" />
 			<bean ref="twitterClient" method="start" />
 			<bean ref="twitterClient" method="offloadMessageToStorage" />
 		</route>
 
-		<route id="sendTweetToDatabase">
+		<route id="tweedarGeo-sendTweetToDatabase">
 			<from uri="seda://sendTweetToDatabase?concurrentConsumers=5" />
 			<unmarshal ref="jackson" />
 			<filter>
