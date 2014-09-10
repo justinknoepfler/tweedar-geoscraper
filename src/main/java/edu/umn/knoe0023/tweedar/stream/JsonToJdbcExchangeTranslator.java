@@ -1,6 +1,7 @@
 package edu.umn.knoe0023.tweedar.stream;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 import java.text.SimpleDateFormat;
@@ -33,12 +34,7 @@ public class JsonToJdbcExchangeTranslator {
 
 	private String tweetToString(Map<String, Object> tweet) throws Exception{
 		String string = "";
-		long time = 0;
-		
-		String createdAt = (String) tweet.get("created_at");
-		if (createdAt != null){
-			time = dateFormat.parse(createdAt).getTime();
-		}
+		long time = System.currentTimeMillis();
 		
 		String coordsStr = "";
 		HashMap<String, Object> coords = (HashMap<String, Object>)tweet.get("coordinates");
@@ -54,7 +50,6 @@ public class JsonToJdbcExchangeTranslator {
 			text = text.replaceAll(regex, "\\\\$1");
 		}
 		string = string.concat(time + ", ");
-		string = string.concat(tweet.get("id_str") + ", ");
 		string = string.concat("\"" + coordsStr + "\"" + ", ");
 		string = string.concat("\"" + text + "\"");
 		return string;
