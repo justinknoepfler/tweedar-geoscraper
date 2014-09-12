@@ -13,7 +13,9 @@ public class SentimentGridModel {
 			NUM_CELLS);
 	long timeStart;
 	long timeEnd;
-	SentimentScoringAlgorithm scoringAlgorithm = new SentimentScoringAlgorithm();
+	
+	private SentimentScoringAlgorithm scoringAlgorithm;
+	
 	private static final String DB_TABLE_NAME = "SentimentGrid";
 	private static final int NUM_CELLS = 2500;
 	private static final int ROWS = 50;
@@ -23,7 +25,8 @@ public class SentimentGridModel {
 	private float longBinSize = 360 / COLUMNS;
 	private float latBinSize = 180 / ROWS;
 
-	public SentimentGridModel(){
+	public SentimentGridModel() throws Exception{
+		scoringAlgorithm = new SentimentScoringAlgorithm();
 		for (int x = 0; x < NUM_CELLS; x++) {
 			sentimentDataArray.add(new SentimentDatum());
 		}
@@ -48,7 +51,7 @@ public class SentimentGridModel {
 		float latitude = tweet.latitude + 90;
 		int longBin = (int) (longitude / longBinSize);
 		int latBin = (int) (latitude / latBinSize);
-		int bin = (latBin * ROWS) + longBin;
+		int bin = (latBin * COLUMNS) + longBin;
 		return bin;
 	}
 
@@ -57,7 +60,7 @@ public class SentimentGridModel {
 		String queryString = "INSERT INTO " + DB_TABLE_NAME
 				+ " VALUES(" + timeStart + "," + timeEnd + "," + ROWS + "," + COLUMNS + ",\"";
 		for(int x = 0; x < NUM_CELLS; x++){
-			queryString = queryString.concat(this.sentimentDataArray.get(x).getAverage() + " ");
+			queryString = queryString.concat(this.sentimentDataArray.get(x).getTotal() + " ");
 		}
 		queryString = queryString.concat("\");");
 		ProducerTemplate camelProducer = exchange.getContext()

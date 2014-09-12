@@ -63,7 +63,7 @@
 		</route>
 
 		<route id="publicationTimer">
-			<from uri="timer://publicationTimer?delay=100000&amp;fixedRate=true&amp;period=100000" />
+			<from uri="timer://publicationTimer?delay=30000&amp;fixedRate=true&amp;period=30000" />
 			<bean ref="model" method="publish" />
 		</route>
 
