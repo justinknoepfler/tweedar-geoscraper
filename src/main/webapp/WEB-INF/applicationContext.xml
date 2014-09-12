@@ -13,18 +13,25 @@
 	<!-- tweet filter bean -->
 	<bean id="tweetFilter" class="edu.umn.knoe0023.tweedar.stream.TweetFilter" />
 
-	<!-- jdbc insert generation bean -->
+	<!-- jdbc insert translation bean -->
 	<bean id="jsonToJdbc"
 		class="edu.umn.knoe0023.tweedar.stream.JsonToJdbcExchangeTranslator" />
 
-	<!-- JDBC data source  -->
+	<!-- json to GeoTweet translation -->
+	<bean id="jsonToGeoTweet" class="edu.umn.knoe0023.tweedar.model.JsonToGeoTweetTranslator" />
+
+	<!-- JDBC data source -->
 	<bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource"
 		destroy-method="close">
 		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
-		<property name="url" value="jdbc:mysql://us-cdbr-east-05.cleardb.net:3306/heroku_0a9d3796bfabb21" />
+		<property name="url"
+			value="jdbc:mysql://us-cdbr-east-05.cleardb.net:3306/heroku_0a9d3796bfabb21" />
 		<property name="username" value="b09735b8db0848" />
 		<property name="password" value="7c1d1501" />
 	</bean>
+
+	<!-- Model bean -->
+	<bean id="model" class="edu.umn.knoe0023.tweedar.model.SentimentGridModel" />
 
 	<camelContext xmlns="http://camel.apache.org/schema/spring">
 
@@ -43,11 +50,27 @@
 			<unmarshal ref="jackson" />
 			<filter>
 				<method ref="tweetFilter" method="process" />
+				<inOnly uri="seda://addTweetToModel" />
 				<bean ref="jsonToJdbc" method="translateTweetToJdbcInsertExchange" />
 				<to uri="jdbc:dataSource" />
 			</filter>
 		</route>
 
+		<route id="tweedarGeo-addTweetToModel">
+			<from uri="seda://addTweetToModel" />
+			<bean ref="jsonToGeoTweet" method="translateTweetToGeoTweet" />
+			<bean ref="model" method="add" />
+		</route>
+
+		<route id="publicationTimer">
+			<from uri="timer://publicationTimer?delay=100000&amp;fixedRate=true&amp;period=100000" />
+			<bean ref="model" method="publish" />
+		</route>
+
+		<route id="publishSentimentGrid">
+			<from uri="seda://model-publishSentimentGrid" />
+			<to uri="jdbc:dataSource" />
+		</route>
 	</camelContext>
 
 </beans>
