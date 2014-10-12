@@ -47,7 +47,18 @@
 			<version>2.0.1</version>
 		</dependency>
 
+		<!-- Javax web services -->
+		<dependency>
+			<groupId>javax.ws.rs</groupId>
+			<artifactId>Jsr311-api</artifactId>
+			<version>1.1.1</version>
+		</dependency>
 
+		<dependency>
+			<groupId>com.sun.jersey</groupId>
+			<artifactId>jersey-client</artifactId>
+			<version>LATEST</version>
+		</dependency>
 
 		<!-- Camel Dependencies -->
 		<dependency>
@@ -73,6 +84,11 @@
 		<dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-jdbc</artifactId>
+			<version>2.13.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-jetty</artifactId>
 			<version>2.13.2</version>
 		</dependency>
 

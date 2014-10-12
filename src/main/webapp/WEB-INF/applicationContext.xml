@@ -32,6 +32,9 @@
 
 	<!-- Model bean -->
 	<bean id="model" class="edu.umn.knoe0023.tweedar.model.SentimentGridModel" />
+	
+	<!-- Grid service -->
+	<bean id="gridService" class="edu.umn.knoe0023.tweedar.service.SentimentGridService"/>
 
 	<camelContext xmlns="http://camel.apache.org/schema/spring">
 
@@ -63,13 +66,18 @@
 		</route>
 
 		<route id="publicationTimer">
-			<from uri="timer://publicationTimer?delay=30000&amp;fixedRate=true&amp;period=30000" />
+			<from uri="timer://publicationTimer?delay=3600s&amp;fixedRate=true&amp;period=3600s" />
 			<bean ref="model" method="publish" />
 		</route>
 
 		<route id="publishSentimentGrid">
 			<from uri="seda://model-publishSentimentGrid" />
 			<to uri="jdbc:dataSource" />
+		</route>
+		
+		<route id="jetty-webservice" >
+			<from uri="jetty:http://localhost:8090/tweedar/api/test" />
+			<bean ref="gridService" method="test" />
 		</route>
 	</camelContext>
 

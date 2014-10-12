@@ -22,8 +22,8 @@ public class SentimentGridModel {
 	private static final int COLUMNS = 50;
 	private static final String PUBLICATION_URI = "seda://model-publishSentimentGrid";
 
-	private float longBinSize = 360 / COLUMNS;
-	private float latBinSize = 180 / ROWS;
+	private float longBinSize = (float)Math.ceil(360 / COLUMNS);
+	private float latBinSize = (float)Math.ceil(180 / ROWS);
 
 	public SentimentGridModel() throws Exception{
 		scoringAlgorithm = new SentimentScoringAlgorithm();
