@@ -55,7 +55,7 @@
 				<method ref="tweetFilter" method="process" />
 				<inOnly uri="seda://addTweetToModel" />
 				<bean ref="jsonToJdbc" method="translateTweetToJdbcInsertExchange" />
-				<!--  DISABLED TEMPORARILY <to uri="jdbc:dataSource" /> -->
+				<to uri="jdbc:dataSource" />
 			</filter>
 		</route>
 
