@@ -3,6 +3,26 @@ package edu.umn.knoe0023.tweedar.model;
 public class SentimentDatum {
 	private float scoreTotal;
 	private float numRecords;
+	private int xCoordinate;
+	private int yCoordinate;
+
+	public int getXCoordinate() {
+		return xCoordinate;
+	}
+
+	public void setXCoordinate(int xCoordinate) {
+		this.xCoordinate = xCoordinate;
+	}
+
+	public int getYCoordinate() {
+		return yCoordinate;
+	}
+
+	public void setYCoordinate(int yCoordinate) {
+		this.yCoordinate = yCoordinate;
+	}
+
+
 	
 	public SentimentDatum(){
 		scoreTotal = 0;
